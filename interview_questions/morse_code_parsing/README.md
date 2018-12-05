@@ -34,3 +34,24 @@ Other improvements:
 - unroll the recursion
 - profile to find speed and memory problems
 
+**Update:**
+
+My brother @tbenthompson, who is a genius `:) >^..^<` , noted that while this problem is necessarily exponential, you can generate graph representation of all possible parsings in linear time.  Yielding from the generator would then be exponential.
+
+To do this, imagine finding all substrings of your morse code string that match a word in your dictionary, and imagine that you have a directed graph with `N + 1` vertices, labeled `v_0, ... , v_N`.  You can think of your nodes as interleaved with your string, so for example, for `mc_string = .-.-`, you have:
+
+`v_0, ".", v_1, "-", v_2, ".", v_3, "-", v_4`
+
+Then `(v_i, v_j)` is an edge iff:
+
+1. `i < j`, and
+2. `mc_string[i:j]`, the string between `v_i` and `v_j`, is a word in your dictionary.
+
+A parsing is then a path from `v_0` to `v_N`.  Condition 1 is there to guarantee our paths move forward, never backward, and condition 2 guarantees that paths map to parsings.
+
+Generating all unique parsings is exactly equivalent to finding all possible paths through the graph from `v_0` to `v_N`.  Determining if there is any parsing amounts to determining if there is any path.
+
+Ben also noted that by converting everything to vectors of 1s and 0s, there might be significant speed up, since strings are effectively vectors, and this would reduce the size of the vectors.
+
+The lesson here for me is to get a bit more abstract in thinking about how to represent a problem before trying to solve it.  And talk to smart people, that's always good too.
+
