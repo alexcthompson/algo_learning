@@ -36,7 +36,7 @@ Other improvements:
 
 **Update:**
 
-My brother @tbenthompson, who is a genius `:) >^..^<` , noted that while this problem is necessarily exponential, you can generate graph representation of all possible parsings in linear time.  Yielding from the generator would then be exponential.
+My brother [@tbenthompson](https://github.com/tbenthompson), who is a genius `:) >^..^<` , noted that while this problem is necessarily exponential, you can generate graph representation of all possible parsings in linear time.  Yielding from the generator would then be exponential.
 
 To do this, imagine finding all substrings of your morse code string that match a word in your dictionary, and imagine that you have a directed graph with `N + 1` vertices, labeled `v_0, ... , v_N`.  You can think of your nodes as interleaved with your string, so for example, for `mc_string = .-.-`, you have:
 
