@@ -1,3 +1,7 @@
+/*
+Solution for LeetCode #904 'Fruit Into Baskets'
+https://leetcode.com/problems/fruit-into-baskets/
+*/
 #include <vector>
 
 class Solution {
@@ -17,34 +21,19 @@ public:
     }
     int totalFruit(std::vector<int>& tree) {
         for (auto current_fruit_type : tree) {
-            if (active_fruit_types[1] == -1) {
-                active_fruit_types[1] = current_fruit_type;
-                counter++;
-                uniform_for_npos++;
-            }
-            else if (current_fruit_type == active_fruit_types[1]) {
-                uniform_for_npos++;
-                counter++;
-            }
-            else if (active_fruit_types[0] == -1) {
+            if (current_fruit_type != active_fruit_types[1]) {
+                if (current_fruit_type != active_fruit_types[0]) {
+                    max_fruit = std::max(max_fruit, counter);
+                    counter = uniform_for_npos;
+                }
+
+                uniform_for_npos = 0;
                 active_fruit_types[0] = active_fruit_types[1];
                 active_fruit_types[1] = current_fruit_type;
-                counter++;
-                uniform_for_npos = 1;
             }
-            else if (current_fruit_type == active_fruit_types[0]) {
-                active_fruit_types[0] = active_fruit_types[1];
-                active_fruit_types[1] = current_fruit_type;
-                uniform_for_npos = 1;
-                counter++;
-            }
-            else {
-                max_fruit = std::max(max_fruit, counter);
-                active_fruit_types[0] = active_fruit_types[1];
-                active_fruit_types[1] = current_fruit_type;
-                counter = uniform_for_npos + 1;
-                uniform_for_npos = 1;
-            }
+
+            uniform_for_npos++;
+            counter++;
         }
 
         max_fruit = std::max(max_fruit, counter);
