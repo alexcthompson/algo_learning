@@ -27,11 +27,27 @@ TEST_CASE ("all tests") {
 
         CHECK ( a == b );
         CHECK ( b != c );
+
+        std::vector<std::tuple<int,int>> unprocessed_input = {{5,10}, {15,30}, {0,30}, {2,4}};
+        std::vector<Interval> answer = {Interval(0,30), Interval(2,4), Interval(5,10),
+            Interval(15,30)};
+        std::vector<Interval> processed_input = process_input(unprocessed_input);
+
+        CHECK ( answer == processed_input );
     }
 
     SECTION ("known results") {
         Solution s;
+
         std::vector<std::tuple<int,int>> unprocessed_input = {{0,30}, {5,10}, {15,20}};
+        int answer = 2;
+        std::vector<Interval> processed_input = process_input(unprocessed_input);
+        CHECK ( s.minMeetingRooms(processed_input) == answer );
+
+        unprocessed_input = {{7,10}, {2,4}};
+        answer = 1;
+        processed_input = process_input(unprocessed_input);
+        CHECK ( s.minMeetingRooms(processed_input) == answer );
 
     }
 }
