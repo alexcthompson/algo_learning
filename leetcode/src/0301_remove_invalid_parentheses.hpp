@@ -37,6 +37,9 @@ void merge_sets(std::unordered_set<T>& A, std::unordered_set<T>& B) {
 }
 
 
+// TODO: refactor to bring the partical results sets, left_to_remove, and
+// right_to_remove within this class.  Or create a container for given string
+// which does this.
 class Solution {
 public:
     // counts the min # of left and right parens that must be removed to make a valid expression
@@ -186,15 +189,9 @@ std::vector<std::string> Solution::removeInvalidParentheses(std::string s) {
     int left_to_remove  = std::get<0>(parens_to_delete);
     int right_to_remove = std::get<1>(parens_to_delete);
 
-    std::vector<std::string> res_vector;
-
     while (left_to_remove > 0 || right_to_remove > 0) {
         res = fix_one_paren(res, left_to_remove, right_to_remove);
     }
 
-    for (auto elem : res) {
-        res_vector.push_back(elem);
-    }
-
-    return res_vector;
+    return std::vector<std::string>(res.begin(), res.end());
 }
