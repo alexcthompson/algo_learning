@@ -5,23 +5,23 @@
 #include "0297_serialize_and_deserialize_binary_tree.hpp"
 
 
-std::ostream& operator << (std::ostream& stream, const TreeNode& t) {
-    std::cout << "TreeNode: val = " << t.val << "; left child = ";
+std::ostream& operator << (std::ostream& ostream, const TreeNode& t) {
+    ostream << "TreeNode: val = " << t.val << "; left child = ";
     if (t.left == NULL) {
-        std::cout << "NULL; right child = ";
+        ostream << "NULL; right child = ";
     }
     else {
-        std::cout << t.left->val << "; right child = ";
+        ostream << t.left->val << "; right child = ";
     }
 
     if (t.right == NULL) {
-        std::cout << "NULL.";
+        ostream << "NULL.";
     }
     else {
-        std::cout << t.right->val << ".";
+        ostream << t.right->val << ".";
     }
 
-    return stream;
+    return ostream;
 }
 
 
@@ -31,53 +31,42 @@ struct Tree {
 };
 
 
-std::ostream& operator << (std::ostream& stream, const Tree& tr) {
-    stream << *(tr.root) << std::endl;
+std::ostream& operator << (std::ostream& ostream, const Tree& tr) {
+    ostream << *(tr.root) << std::endl;
 
     if (tr.root->left) {
         Tree left(tr.root->left);
-        stream << left;
+        ostream << left;
     }
     if (tr.root->right) {
         Tree right(tr.root->right);
-        stream << right;
+        ostream << right;
     }
 
-    return stream;
+    return ostream;
 }
 
 
 // recursive check for subtree equality
 bool operator == (const TreeNode& A, const TreeNode& B) {
     if (A.val != B.val) {
-        std::cout << A.val << " != " << B.val << std::endl;
         return false;
     }
 
-    if (A.left) {
-        std::cout << "left check" << std::endl;
-        if(!B.left) {
-            std::cout << "left check 1" << std::endl;
-            return false;
-        }
-        else if (A.left != B.left) {
-            std::cout << "left check 2" << std::endl;
-            std::cout << "*(A.left) = " << *(A.left)
-                      << "; *(B.left) = " << *(B.left) << std::endl;
-            return false;
-        }
+    // left side
+    if ((A.left == nullptr) != (B.left == nullptr)) {
+        return false;
+    }
+    else if (A.left && !(*(A.left) == *(B.left))) {
+        return false;
     }
 
-    if (A.right) {
-        std::cout << "right check" << std::endl;
-        if(!B.right) {
-            std::cout << "right check 1" << std::endl;
-            return false;
-        }
-        else if (A.right != B.right) {
-            std::cout << "right check 2" << std::endl;
-            return false;
-        }
+    // right side
+    if ((A.right == nullptr) != (B.right == nullptr)) {
+        return false;
+    }
+    else if (A.right && !(*(A.right) == *(B.right))) {
+        return false;
     }
 
     return true;
@@ -88,7 +77,9 @@ bool operator != (const TreeNode& A, const TreeNode& B) {
 }
 
 
-TEST_CASE("all tests") {
+TEST_CASE( "all tests" ) {
+    Codec c;
+
     TreeNode* root = new TreeNode(777);
     root->left = new TreeNode(778);
     (root->left)->left = new TreeNode(779);
@@ -98,7 +89,7 @@ TEST_CASE("all tests") {
 
     Tree t(root);
 
-    SECTION("== overload check") {
+    SECTION( "== overload check" ) {
         TreeNode* root2 = new TreeNode(777);
         root2->left = new TreeNode(778);
         (root2->left)->left = new TreeNode(779);
@@ -113,26 +104,21 @@ TEST_CASE("all tests") {
         ((root3->left)->right)->left = new TreeNode(-23);
         root3->right = NULL;
 
-        Codec c;
-        std::cout << c.serialize(root) << std::endl;
-        std::cout << c.serialize(root2) << std::endl;
-        std::cout << c.serialize(root3) << std::endl;
-
+        // checks
         CHECK ( *root2 == *root );
         CHECK ( *root3 != *root );
     }
 
-    SECTION("serialize") {
-        Codec c;
+    SECTION( "serialize" ) {
         std::string result = c.serialize(root);
         std::string expected = "777 778 779 * * 11 -23 * * * * ";
         CHECK( result == expected );
     }
 
-    SECTION("deserialize") {
-        Codec c;
+    SECTION( "deserialize" ) {
         std::string encoded = "777 778 779 * * 11 -23 * * * * ";
         TreeNode* result = c.deserialize(encoded);
-        CHECK( result == root );
+        REQUIRE( result != nullptr );
+        CHECK( *result == *root );
     }
 }
