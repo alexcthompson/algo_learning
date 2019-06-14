@@ -2,7 +2,13 @@
 Solution for LeetCode #5 'Longest Palindromic Substring'
 https://leetcode.com/problems/longest-palindromic-substring/
 Runtime: X ms for Y test cases, Zth percentile
-Time complexity:
+Time complexity: potentially exponential in N, or nearly so, for some
+pathological test cases.
+L45-93 are there to cope with a test case of 1000 of the letter "d", which,
+because of the branching nature of the problem, kills the algo.  I should have
+done a better job of writing this modularly, as it was trouble to debug.
+Some brute force solutions run faster in aggregate on small strings, but are
+pokey on longer strings.  /editorial
 */
 #include <queue>
 #include <string>
@@ -48,8 +54,52 @@ std::string Solution::longestPalindrome(std::string s) {
     // populate non-trivial palindromes to check of length 2 and 3
     for (int increment = 2; increment <= 3; increment++) {
         for (current_pos = 0; current_pos + increment <= s.size(); current_pos++) {
+            // check for large palindromic sequences at the start location
+            char first_char = s[current_pos];
+            bool all_same_char = true;
+
+            for (int i = 1; i <= increment; i++) {
+                if (s[current_pos + i] != first_char) {
+                    all_same_char = false;
+                }
+            }
+
+            // expand to largest possible string of the same characters and
+            // check length
+            if (all_same_char) {
+                int start = current_pos;
+                int end = current_pos + increment - 1;
+                while (start > 0) {
+                    if (s[start - 1] == first_char) {
+                        start--;
+                    }
+                    else {
+                        break;
+                    }
+                }
+
+                while (end < s.size() - 1) {
+                    if (s[end + 1] == first_char) {
+                        end++;
+                    }
+                    else {
+                        break;
+                    }
+                }
+
+                if (start == 0 && end == s.size() - 1) {
+                    return s;
+                }
+                else {
+                    std::tuple<int,int> new_val = {start, end - start + 1};
+                    to_check.push(new_val);
+                }
+            }
+            // proceed normally
+            else {
             std::tuple<int,int> new_val = {current_pos, increment};
             to_check.push(new_val);
+            }
         }
     }
 
